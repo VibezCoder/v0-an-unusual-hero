@@ -44,14 +44,22 @@ export function AuthStatus() {
   }
 
   return (
-    <button
-      onClick={async () => {
-        await supabase.auth.signOut()
-        window.location.reload()
-      }}
-      className="px-3 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
-    >
-      Logout
-    </button>
+    <div className="flex gap-4">
+      <Link
+        href="/blog"
+        className="px-3 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
+      >
+        Blog
+      </Link>
+      <button
+        onClick={async () => {
+          await supabase.auth.signOut()
+          window.location.reload()
+        }}
+        className="px-3 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
+      >
+        Logout
+      </button>
+    </div>
   )
 }
