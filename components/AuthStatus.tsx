@@ -26,16 +26,16 @@ export function AuthStatus() {
 
   if (!user) {
     return (
-      <div className="flex gap-2">
+      <div className="flex gap-3 items-center">
         <Link
           href="/auth/login"
-          className="px-3 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
+          className="text-sm font-medium text-white/70 hover:text-white transition-colors"
         >
           Login
         </Link>
         <Link
           href="/auth/sign-up"
-          className="px-3 py-2 text-sm font-medium bg-primary text-primary-foreground rounded hover:opacity-90 transition-opacity"
+          className="text-sm font-medium bg-indigo-600 text-white px-4 py-2 rounded-full hover:bg-indigo-500 transition-colors"
         >
           Sign Up
         </Link>
@@ -49,7 +49,7 @@ export function AuthStatus() {
         await supabase.auth.signOut()
         window.location.reload()
       }}
-      className="px-3 py-2 text-sm font-medium text-foreground hover:text-primary transition-colors"
+      className="text-sm font-medium text-white/70 hover:text-white transition-colors"
     >
       Logout
     </button>

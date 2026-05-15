@@ -5,6 +5,7 @@ import Image from "next/image"
 import { useRef, useState, useEffect } from "react"
 import { gsap } from "gsap"
 import { Plus } from "lucide-react"
+import { AuthStatus } from "./AuthStatus"
 
 export function Hero() {
   const cardRef = useRef<HTMLDivElement>(null)
@@ -242,7 +243,8 @@ export function Hero() {
           style={{ left: 0, top: 0 }}
         />
 
-        <div className="absolute right-[0.85%] top-[0.75%] z-20">
+        <div className="absolute right-[0.85%] top-[0.75%] z-20 flex items-center gap-4">
+          <AuthStatus />
           <Link
             href="#demo"
             className="rounded-full bg-indigo-600 px-4 py-2 text-sm font-mono font-light uppercase tracking-[-0.01em] text-white shadow-md hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400"
