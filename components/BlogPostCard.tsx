@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import type { BlogPost } from "@/lib/markdown.server"
+import type { BlogPost } from "@/lib/blog-data"
 
 interface BlogPostCardProps {
   post: BlogPost
