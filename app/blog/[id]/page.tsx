@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
 import { BlogPostDetail } from '@/components/BlogPostDetail'
 import { getPostBySlug, getPostSlugs } from '@/lib/blog-data'
 
@@ -9,10 +10,9 @@ export async function generateStaticParams() {
   }))
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+export async function generateMetadata({ params }: { params: { id: string } }) {
   try {
-    const { id } = await params
-    const post = getPostBySlug(id)
+    const post = getPostBySlug(params.id)
     return {
       title: `${post.title} | Midjourney Blog | Lucent`,
       description: post.excerpt,
@@ -24,13 +24,18 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   }
 }
 
-export default async function BlogPostPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function BlogPostPage({ params }: { params: { id: string } }) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    redirect('/auth/login')
+  }
+
   try {
-    const { id } = await params
-    const post = getPostBySlug(id)
+    const post = getPostBySlug(params.id)
     return <BlogPostDetail post={post} />
-  } catch (error) {
-    console.error('[v0] Error loading blog post:', error)
+  } catch {
     redirect('/blog')
   }
 }
