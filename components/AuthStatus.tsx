@@ -7,20 +7,31 @@ import Link from 'next/link'
 export function AuthStatus() {
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-  const supabase = createClient()
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      setUser(user)
-      setLoading(false)
+      try {
+        const supabase = createClient()
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
+        setUser(user)
+      } catch (err) {
+        console.error('[v0] AuthStatus error:', err)
+        setError('Failed to load auth status')
+      } finally {
+        setLoading(false)
+      }
     }
     getUser()
-  }, [supabase])
+  }, [])
 
   if (loading) {
+    return null
+  }
+
+  if (error) {
     return null
   }
 

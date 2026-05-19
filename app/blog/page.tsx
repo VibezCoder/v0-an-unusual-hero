@@ -1,5 +1,3 @@
-import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { BlogPostCard } from '@/components/BlogPostCard'
 import { getAllPosts } from '@/lib/blog-data'
@@ -10,13 +8,6 @@ export const metadata = {
 }
 
 export default async function BlogPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user) {
-    redirect('/auth/login')
-  }
-
   const posts = getAllPosts()
 
   return (
@@ -51,7 +42,7 @@ export default async function BlogPage() {
       {/* Footer */}
       <div className="border-t border-zinc-800 py-8 md:py-12 bg-zinc-900/30">
         <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 text-center text-zinc-500 text-sm">
-          <p>Welcome, {user.email}! You have access to exclusive Midjourney content.</p>
+          <p>Explore the latest insights and innovations in AI-powered creative generation.</p>
         </div>
       </div>
     </div>
