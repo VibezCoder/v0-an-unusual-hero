@@ -5,8 +5,8 @@ import { useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { BlogPostDetail } from '@/components/BlogPostDetail'
-import { blogPosts } from '@/lib/blog-posts'
-import type { BlogPost } from '@/lib/blog-posts'
+import { getPostBySlug } from '@/lib/markdown'
+import type { BlogPost } from '@/lib/markdown'
 
 export default function BlogPostPage() {
   const params = useParams()
@@ -29,13 +29,13 @@ export default function BlogPostPage() {
         setUser(user)
 
         // Find the post
-        const foundPost = blogPosts.find(p => p.id === params.id)
-        if (!foundPost) {
+        try {
+          const foundPost = getPostBySlug(params.id as string)
+          setPost(foundPost)
+        } catch {
           router.push('/blog')
           return
         }
-
-        setPost(foundPost)
       } catch (error) {
         console.error('Auth error:', error)
         router.push('/auth/login')

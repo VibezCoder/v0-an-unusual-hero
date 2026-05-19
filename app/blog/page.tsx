@@ -5,11 +5,13 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { BlogPostCard } from '@/components/BlogPostCard'
-import { blogPosts } from '@/lib/blog-posts'
+import { getAllPosts } from '@/lib/markdown'
+import type { BlogPost as MarkdownPost } from '@/lib/markdown'
 
 export default function BlogPage() {
   const [user, setUser] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [posts, setPosts] = useState<MarkdownPost[]>([])
   const router = useRouter()
   const supabase = createClient()
 
@@ -24,6 +26,8 @@ export default function BlogPage() {
         }
         
         setUser(user)
+        const allPosts = getAllPosts()
+        setPosts(allPosts)
       } catch (error) {
         console.error('Auth error:', error)
         router.push('/auth/login')
@@ -70,8 +74,8 @@ export default function BlogPage() {
       {/* Blog Posts Grid */}
       <div className="max-w-6xl mx-auto px-4 md:px-6 lg:px-8 py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-          {blogPosts.map((post) => (
-            <BlogPostCard key={post.id} post={post} />
+          {posts.map((post) => (
+            <BlogPostCard key={post.slug} post={post} />
           ))}
         </div>
       </div>
