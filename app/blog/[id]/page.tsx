@@ -1,65 +1,41 @@
-'use client'
-
-import { useEffect, useState } from 'react'
-import { useParams } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
+import { redirect } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
 import { BlogPostDetail } from '@/components/BlogPostDetail'
-import { getPostBySlug } from '@/lib/markdown'
-import type { BlogPost } from '@/lib/markdown'
+import { getPostBySlug, getPostSlugs } from '@/lib/markdown.server'
 
-export default function BlogPostPage() {
-  const params = useParams()
-  const [post, setPost] = useState<BlogPost | null>(null)
-  const [user, setUser] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  const router = useRouter()
-  const supabase = createClient()
+export async function generateStaticParams() {
+  const slugs = getPostSlugs()
+  return slugs.map((slug) => ({
+    id: slug,
+  }))
+}
 
-  useEffect(() => {
-    const checkAuthAndLoadPost = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser()
-        
-        if (!user) {
-          router.push('/auth/login')
-          return
-        }
-        
-        setUser(user)
-
-        // Find the post
-        try {
-          const foundPost = getPostBySlug(params.id as string)
-          setPost(foundPost)
-        } catch {
-          router.push('/blog')
-          return
-        }
-      } catch (error) {
-        console.error('Auth error:', error)
-        router.push('/auth/login')
-      } finally {
-        setLoading(false)
-      }
+export async function generateMetadata({ params }: { params: { id: string } }) {
+  try {
+    const post = getPostBySlug(params.id)
+    return {
+      title: `${post.title} | Midjourney Blog | Lucent`,
+      description: post.excerpt,
     }
-
-    if (params.id) {
-      checkAuthAndLoadPost()
+  } catch {
+    return {
+      title: 'Blog Post | Lucent',
     }
-  }, [params.id, router, supabase.auth])
+  }
+}
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
-        <div className="text-zinc-400">Loading...</div>
-      </div>
-    )
+export default async function BlogPostPage({ params }: { params: { id: string } }) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    redirect('/auth/login')
   }
 
-  if (!user || !post) {
-    return null
+  try {
+    const post = getPostBySlug(params.id)
+    return <BlogPostDetail post={post} />
+  } catch {
+    redirect('/blog')
   }
-
-  return <BlogPostDetail post={post} />
 }

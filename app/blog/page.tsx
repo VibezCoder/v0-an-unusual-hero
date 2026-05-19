@@ -1,55 +1,23 @@
-'use client'
-
-import { useEffect, useState } from 'react'
-import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
+import { redirect } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { BlogPostCard } from '@/components/BlogPostCard'
-import { getAllPosts } from '@/lib/markdown'
-import type { BlogPost as MarkdownPost } from '@/lib/markdown'
+import { getAllPosts } from '@/lib/markdown.server'
 
-export default function BlogPage() {
-  const [user, setUser] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  const [posts, setPosts] = useState<MarkdownPost[]>([])
-  const router = useRouter()
-  const supabase = createClient()
+export const metadata = {
+  title: 'Midjourney Blog | Lucent',
+  description: 'Discover the latest news, updates, and insights about Midjourney and AI image generation.',
+}
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const { data: { user } } = await supabase.auth.getUser()
-        
-        if (!user) {
-          router.push('/auth/login')
-          return
-        }
-        
-        setUser(user)
-        const allPosts = getAllPosts()
-        setPosts(allPosts)
-      } catch (error) {
-        console.error('Auth error:', error)
-        router.push('/auth/login')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    checkAuth()
-  }, [router, supabase.auth])
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
-        <div className="text-zinc-400">Loading...</div>
-      </div>
-    )
-  }
+export default async function BlogPage() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
-    return null
+    redirect('/auth/login')
   }
+
+  const posts = getAllPosts()
 
   return (
     <div className="min-h-screen bg-zinc-950">
