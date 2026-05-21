@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { BlogPostDetail } from '@/components/BlogPostDetail'
-import { getPostBySlug, getPostSlugs } from '@/lib/blog-data'
+import { getPostBySlug, getPostSlugs } from '@/lib/markdown.server'
 
 export async function generateStaticParams() {
   const slugs = getPostSlugs()
