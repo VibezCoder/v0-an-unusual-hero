@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { BlogPostCard } from '@/components/BlogPostCard'
-import { getAllPosts } from '@/lib/markdown.server'
+import { getAllPosts } from '@/lib/blog-data'
 
 export const metadata = {
   title: 'Midjourney Blog | Lucent',
